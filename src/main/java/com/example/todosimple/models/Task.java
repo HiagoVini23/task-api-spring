@@ -12,6 +12,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import java.util.Objects;
 
 @Entity
@@ -35,6 +37,7 @@ public class Task {
     @ManyToOne
     @JoinColumn(name = "task_group_id")
     @NotNull
+    @JsonBackReference
     private TaskGroup taskGroup;
 
     @Column(name = "description", length = 255, nullable = false)
