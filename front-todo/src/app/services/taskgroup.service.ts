@@ -6,14 +6,14 @@ import { AuthenticationService } from '../utils/authentication.service';
 @Injectable({
   providedIn: 'root'
 })
-export class TaskService {
+export class TaskGroupService {
 
   constructor(private http: HttpClient) { }
 
-  async getTasks(userId: number): Promise<any> {
+  async getTasksGroupByUserId(userId: number): Promise<any> {
     try {
       const response = await this.http
-        .get(`${environment.API}/task/all/${userId}`)
+        .get(`${environment.API}/taskgroup/user/${userId}`)
         .toPromise();
       return response;
     } catch (error) {

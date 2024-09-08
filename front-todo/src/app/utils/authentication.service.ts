@@ -29,12 +29,13 @@ export class AuthenticationService implements OnInit {
   async login(user: { email: string; password: string; }): Promise<boolean> {
     if (user) {
       return this.http
-        .post<boolean>(`${environment.API}/user/login`, user)
+        .post<boolean>(`${environment.API}/auth/login`, user)
         .toPromise()
         .then((result: any) => {
+          console.log(result)
           this.token = result.token;
           this.storage.set("token", this.token);
-          this.storage.set("user", result.data);
+          this.storage.set("user", result.user);
           return true;
         })
         .catch((err) => {

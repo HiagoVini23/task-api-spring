@@ -11,6 +11,7 @@ import { MatInputModule } from '@angular/material/input';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import { AuthenticationService } from '../utils/authentication.service';
 import { TaskService } from '../services/task.service';
+import { TaskGroupService } from '../services/taskgroup.service';
 import {MatPaginatorModule, PageEvent} from '@angular/material/paginator';
 
 @Component({
@@ -24,14 +25,14 @@ import {MatPaginatorModule, PageEvent} from '@angular/material/paginator';
 export class ToDoListComponent implements OnInit {
   openInput = false;
   taskForm!: FormGroup;
-  tasks: any;
+  tasksGroup: any;
   pageSize = 4;
   pageIndex = 0;
   pageEvent!: PageEvent;
-  currentPageTasks: any;
+  currentPageTasksGroup: any;
 
-  constructor(private authentication: AuthenticationService, 
-    private taskService: TaskService,){
+  constructor(private authentication: AuthenticationService, private taskService: TaskService,
+    private taskGroupService: TaskGroupService){
 
   }
 
@@ -47,21 +48,23 @@ export class ToDoListComponent implements OnInit {
     this.pageSize = e.pageSize;
     this.pageIndex = e.pageIndex;
     const startIndex = this.pageIndex * this.pageSize;
-    const endIndex = Math.min(startIndex + this.pageSize, this.tasks.length);
+    const endIndex = Math.min(startIndex + this.pageSize, this.tasksGroup.length);
     // Obter os itens a serem exibidos na página atual
-    this.currentPageTasks = this.tasks.slice(startIndex, endIndex);
+    this.currentPageTasksGroup = this.tasksGroup.slice(startIndex, endIndex);
   }
 
   async findAll(){
-    this.tasks = await this.taskService.getTasks((await this.authentication.getLogUser()).id)
-    this.currentPageTasks = this.tasks.slice(this.pageIndex, this.pageSize);
+    this.tasksGroup = await this.taskGroupService.getTasksGroupByUserId((await this.authentication.getLogUser()).id)
+    console.log(this.tasksGroup)
+    this.currentPageTasksGroup = this.tasksGroup.slice(this.pageIndex, this.pageSize);
   }
 
   logout(){
     this.authentication.logout();
   }
 
-  createTask(){
+  createTaskGroup(){
 
   }
+
 }

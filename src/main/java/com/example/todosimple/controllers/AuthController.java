@@ -23,17 +23,18 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody @Valid User user) {
         try {
-            String token = authorizationService.login(user);
-            return ResponseEntity.ok(new LoginResponse("Bearer " + token));
+            LoginResponse loginResponse = authorizationService.login(user);
+            return ResponseEntity.ok(new LoginResponse("Bearer " + loginResponse.getToken(), loginResponse.getUser()));
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(new LoginResponse(e.getMessage()));
+            return ResponseEntity.badRequest().body(new LoginResponse(e.getMessage(), null));
         }
     }
 
     @PostMapping("/register")
     public ResponseEntity<User> register(@RequestBody @Valid User user) {
-        boolean isRegistered = authorizationService.register(user);
-        if (isRegistered) {
+        Long idRegistered = authorizationService.register(user);
+        if (idRegistered != -1L) {
+            user.setId(idRegistered);
             return ResponseEntity.ok(user);
         } else {
             return ResponseEntity.badRequest().build(); 

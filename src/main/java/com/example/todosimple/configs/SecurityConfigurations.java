@@ -8,6 +8,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
 
 @Configuration
 @EnableWebSecurity
@@ -16,13 +17,16 @@ public class SecurityConfigurations {
     @Bean 
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
-            .csrf(csrf -> csrf.disable())
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeRequests(auth -> auth
-                .antMatchers("/auth/login", "/auth/register").permitAll()
-                .anyRequest().authenticated()
-            )
-            .build();
+                .httpBasic(http -> http.disable())
+                .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors
+                        .configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues())) // Ativa as configurações CORS com permissões padrão
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeRequests(auth -> auth
+                                .antMatchers("/auth/login", "/auth/register").permitAll()
+                                .anyRequest().hasRole("USER")
+                )
+                .build();
     }
 
     @Bean

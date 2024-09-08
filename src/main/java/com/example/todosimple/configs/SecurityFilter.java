@@ -1,6 +1,7 @@
 package com.example.todosimple.configs;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -11,6 +12,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.example.todosimple.repositories.UserRepository;
 import com.example.todosimple.services.TokenService;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 
@@ -30,10 +33,10 @@ public class SecurityFilter extends OncePerRequestFilter{
     
                 if (token != null) {
                     var username = tokenService.validateToken(token);
-                    UserDetails user = userRepository.findByUsername(username);
+                    UserDetails user = userRepository.findByEmail(username);
             
                     if (user != null) {
-                        var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+                        var authentication = new UsernamePasswordAuthenticationToken(user, token, user.getAuthorities());
                         SecurityContextHolder.getContext().setAuthentication(authentication);
                     }
                 }

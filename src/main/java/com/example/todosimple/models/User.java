@@ -13,11 +13,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -42,7 +44,7 @@ public class User implements UserDetails {
     }
 
     public User(String username, String password) {
-        this.username = username;
+        this.email = username;
         this.password = password;
     }
 
@@ -51,11 +53,12 @@ public class User implements UserDetails {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "username", length = 100, nullable = false, unique = true)
-    @NotNull(groups = CreateUser.class)
-    @NotEmpty(groups = CreateUser.class)
-    @Size(groups = CreateUser.class, min = 2, max = 100)
-    private String username;
+    @Column(name = "email", length = 100, nullable = false, unique = true)
+    @NotNull(groups = CreateUser.class, message = "O campo de e-mail não pode ser nulo.")
+    @NotEmpty(groups = CreateUser.class, message = "O campo de e-mail não pode ser vazio.")
+    @Size(groups = CreateUser.class, min = 5, max = 100, message = "O e-mail deve ter entre 5 e 100 caracteres.")
+    @Email(groups = CreateUser.class, message = "Por favor, forneça um endereço de e-mail válido.")
+    private String email;
 
     @JsonProperty(access = Access.WRITE_ONLY)
     @Column(name = "password", length = 60, nullable = false)
@@ -80,12 +83,12 @@ public class User implements UserDetails {
         this.id = id;
     }
 
-    public String getUsername() {
-        return this.username;
+    public String getEmail() {
+        return this.email;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getPassword() {
@@ -114,30 +117,30 @@ public class User implements UserDetails {
             return false;
         User user = (User) obj;
         return Objects.equals(id, user.id) &&
-                Objects.equals(username, user.username) &&
+                Objects.equals(email, user.email) &&
                 Objects.equals(password, user.password) &&
                 Objects.equals(tasksGroup, user.tasksGroup); // Incluindo tasksGroup para comparação
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, username, password, tasksGroup);
+        return Objects.hash(id, email, password, tasksGroup);
     }
 
     @Override
     public String toString() {
         return "{" +
                 " id='" + getId() + "'" +
-                ", username='" + getUsername() + "'" +
+                ", username='" + getEmail() + "'" +
                 ", password='" + getPassword() + "'" +
                 "}";
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.emptyList();
+         return Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
     }
-
+    
     @Override
     public boolean isAccountNonExpired() {
         return true;
@@ -157,6 +160,11 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public String getUsername() {
+        return this.getEmail();
     }
 
 }

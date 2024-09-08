@@ -11,7 +11,7 @@ export const customInterceptor: HttpInterceptorFn = (request, next) =>  {
       let localToken = localStorage.getItem('token');
         if (localToken){
           localToken = localToken.replace(/["']/g, ''); // Isso remove todas as aspas duplas na string
-          request = request.clone({headers: request.headers.set('Authorization', 'Bearer '+ localToken)})
+          request = request.clone({headers: request.headers.set('Authorization', localToken)})
         }
         return next(request); 
       }
