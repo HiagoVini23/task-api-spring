@@ -1,0 +1,48 @@
+<div id="main">
+    <mat-toolbar>
+        <mat-toolbar-row>
+            <span id="title">Hiago's to-do</span>
+            <span class="example-spacer"></span>
+            <button (click)="logout()" mat-mini-fab color="primary">
+                <mat-icon matTooltip="Sair">logout</mat-icon>
+            </button>
+        </mat-toolbar-row>
+    </mat-toolbar>
+    <br />
+    <button style="margin-bottom: 7px;" (click)="openInput =! openInput" mat-mini-fab color="primary">
+        <mat-icon matTooltip="Adicionar" *ngIf="!openInput">add</mat-icon>
+        <mat-icon matTooltip="Cancelar" *ngIf="openInput">close</mat-icon>
+    </button>
+    <form *ngIf="openInput" class="form-task" style="width: 50%; margin-bottom: 20px;" (ngSubmit)="createTask()"
+        [formGroup]="taskForm" #formDir="ngForm">
+        <mat-form-field style="width: 100%;" class="form-field">
+            <mat-label>Descrição</mat-label>
+            <textarea matInput placeholder="Insira a descrição" formControlName="description"></textarea>
+        </mat-form-field>
+        <button type="submit" mat-flat-button color="primary">CONFIRMAR</button>
+    </form>
+
+    <ng-container *ngFor="let task of currentPageTasks">
+        <mat-card>
+            <mat-card-content [ngStyle]="task.completed ? {'text-decoration': 'line-through'} : {}">
+                {{ task.description }}
+            </mat-card-content>
+            <div id='card-actions'>
+                <mat-card-actions>
+                    <mat-checkbox [(ngModel)]="task.completed" color="primary"></mat-checkbox>
+                </mat-card-actions>
+                <mat-card-actions>
+                    <button mat-icon-button matTooltip="Editar" color="primary">
+                        <mat-icon>edit</mat-icon>
+                    </button>
+                    <button mat-icon-button matTooltip="Excluir" color="primary">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                </mat-card-actions>
+            </div>
+        </mat-card>
+    </ng-container>
+    <mat-paginator (page)="handlePageEvent($event)" [length]="tasks.length" [pageSize]="pageSize" 
+    [pageSizeOptions]="[4, 8, 25, 100]" aria-label="Select page">
+    </mat-paginator>
+</div>

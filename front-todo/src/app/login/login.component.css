@@ -1,0 +1,53 @@
+#main{
+    width: 100vw;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    vertical-align: center;
+    display: flex;
+}
+
+.form-login{
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    vertical-align: center;   
+}
+
+button{
+    border-radius: 10px;
+}
+
+#form-main {
+    display: flex;
+    flex-direction: column; /* Altera a direção do flex container para coluna */
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+#fields {
+    width: 80%;
+}
+
+#buttons-bar {
+    width: 100%; /* Para ocupar a largura total */
+    justify-content: center;
+    align-items: center;
+    display: flex;
+}
+
+mat-form-field{
+    width: 100%;
+}
+
+mat-card{
+    width: 35%;
+    height: 45%;
+    box-shadow: 1px 3px 4px 3px #afafaf;
+    justify-content: center;
+    align-items: center;
+    vertical-align: center;
+    display: flex;
+}

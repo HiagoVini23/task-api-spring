@@ -1,0 +1,28 @@
+<div id="main">
+    <mat-card>
+        <h2> Hiago's to do</h2>
+        <form class="form-login" (ngSubmit)="login()" [formGroup]="loginForm" #formDir="ngForm">
+            <div id="form-main">
+                <div id="fields">
+                    <mat-form-field class="form-field">
+                        <mat-label>Email</mat-label>
+                        <input matInput placeholder="Insira seu email" formControlName="email">
+                    </mat-form-field>
+                    <mat-form-field class="form-field">
+                        <mat-label>Senha</mat-label>
+                        <input [type]="hide ? 'password' : 'text'" matInput placeholder="Insira sua senha"
+                            formControlName="password">
+                        <button type="button" mat-icon-button matSuffix (click)="hide = !hide"
+                            [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+                            <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                        </button>
+                    </mat-form-field>
+                </div>
+                <div id="buttons-bar">
+                    <button type="submit" (click)="login()" mat-flat-button color="primary">Entrar</button>
+                    <button mat-button color="primary">Cadastre-se</button>
+                </div>
+            </div>
+        </form>
+    </mat-card>
+</div>
