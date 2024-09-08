@@ -2,20 +2,16 @@ package com.example.todosimple.repositories;
 
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import com.example.todosimple.models.Task;
 
 @Repository
 public interface TaskRepository extends JpaRepository<Task, Long> {
 
-    //List<Task> findByUser_Id(Long id);
+    // Usando query derivada baseada em convenção do Spring Data JPA
+    List<Task> findByTaskGroupId(Long id);
 
-    //@Query(value = "SELECT t FROM Task WHERE t.user.id = :id")
-    //List<Task> findByUser_Id(@Param("id") Long id);
-
-    @Query(value = "SELECT * FROM task t WHERE t.user_id = :id", nativeQuery = true)
-    List<Task> findByUser_Id(@Param("id") Long id);
-
+    // Alternativamente, usando JPQL (se necessário mais controle sobre a query)
+    //@Query("SELECT t FROM Task t WHERE t.taskGroup.id = :id")
+    //List<Task> findByTaskGroupId(@Param("id") Long id);
 }

@@ -1,13 +1,7 @@
 package com.example.todosimple.services;
 
-import java.util.Optional;
-
-import javax.management.RuntimeErrorException;
-import javax.naming.NameNotFoundException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,9 +25,8 @@ public class UserService {
     @Transactional
     public User create(User obj) {
         obj.setId(null);
-        obj = this.userRepository.save(obj);
-        return obj;
-    };
+        return this.userRepository.save(obj);
+    }
 
     @Transactional
     public User update(User obj) {

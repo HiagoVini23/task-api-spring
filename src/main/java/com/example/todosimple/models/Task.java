@@ -9,6 +9,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import java.util.Objects;
@@ -21,9 +22,8 @@ public class Task {
     public Task() {
     }
 
-    public Task(Long id, User user, String description) {
+    public Task(Long id, String description) {
         this.id = id;
-        this.user = user;
         this.description = description;
     }
 
@@ -33,8 +33,9 @@ public class Task {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "task_group_id")
+    @NotNull
+    private TaskGroup taskGroup;
 
     @Column(name = "description", length = 255, nullable = false)
     @NotBlank
@@ -47,14 +48,6 @@ public class Task {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public User getUser() {
-        return this.user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 
     public String getDescription() {
@@ -70,10 +63,14 @@ public class Task {
         return this;
     }
 
-    public Task user(User user) {
-        setUser(user);
-        return this;
+    public void setTaskGroup(TaskGroup taskGroup) {
+        this.taskGroup = taskGroup;
     }
+    
+    public TaskGroup getTaskGroup() {
+        return this.taskGroup;
+    }
+    
 
     public Task description(String description) {
         setDescription(description);
@@ -82,29 +79,25 @@ public class Task {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == this)
+        if (this == obj)
             return true;
-        if (!(obj instanceof User)) {
+        if (obj == null || getClass() != obj.getClass())
             return false;
-        }
         Task task = (Task) obj;
-        return Objects.equals(id, task.id) && Objects.equals(user, task.user) &&
-                Objects.equals(description, task.description);
+        return Objects.equals(id, task.id) && 
+               Objects.equals(description, task.description) &&
+               Objects.equals(taskGroup, task.taskGroup);
     }
-
+    
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
-        return Objects.hash(id, user, description);
+        return Objects.hash(id, description, taskGroup);
     }
 
     @Override
     public String toString() {
         return "{" +
                 " id='" + getId() + "'" +
-                ", user='" + getUser() + "'" +
                 ", description='" + getDescription() + "'" +
                 "}";
     }

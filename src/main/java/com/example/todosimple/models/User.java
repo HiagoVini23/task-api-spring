@@ -3,6 +3,7 @@ package com.example.todosimple.models;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,6 +16,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
@@ -24,8 +26,11 @@ import java.util.Objects;
 @Table(name = User.TABLE_NAME)
 public class User {
 
-    public interface CreateUser {}
-    public interface UpdateUser {}
+    public interface CreateUser {
+    }
+
+    public interface UpdateUser {
+    }
 
     public static final String TABLE_NAME = "user";
 
@@ -46,18 +51,23 @@ public class User {
     @Column(name = "username", length = 100, nullable = false, unique = true)
     @NotNull(groups = CreateUser.class)
     @NotEmpty(groups = CreateUser.class)
-    @Size(groups = CreateUser.class,min = 2, max = 100)
+    @Size(groups = CreateUser.class, min = 2, max = 100)
     private String username;
 
     @JsonProperty(access = Access.WRITE_ONLY)
     @Column(name = "password", length = 60, nullable = false)
-    @NotNull(groups = {CreateUser.class, UpdateUser.class})
-    @NotEmpty(groups = {CreateUser.class, UpdateUser.class})
-    @Size(groups = {CreateUser.class, UpdateUser.class}, min = 8, max = 60)
+    @NotNull(groups = { CreateUser.class, UpdateUser.class })
+    @NotEmpty(groups = { CreateUser.class, UpdateUser.class })
+    @Size(groups = { CreateUser.class, UpdateUser.class }, min = 8, max = 60)
     private String password;
 
-    @OneToMany(mappedBy = "user")
-    private List<Task> tasks = new ArrayList<Task>();
+    // orphanRemoval = se a entidade for desassociada de seu pai é excluida
+    // automaticamente
+    // JsonManagedReference evita criar json inifinito, pois user ref taskgroup e
+    // taskgroup ref user
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<TaskGroup> tasksGroup = new ArrayList<>();
 
     public Long getId() {
         return this.id;
@@ -83,33 +93,32 @@ public class User {
         this.password = password;
     }
 
-    @JsonIgnore
-    public List<Task> getTasks() {
-        return this.tasks;
+    public void addTaskGroup(TaskGroup taskGroup) {
+        taskGroup.setUser(this);
+        this.tasksGroup.add(taskGroup);
     }
 
-    public void setTasks(List<Task> tasks) {
-        this.tasks = tasks;
+    public void removeTaskGroup(TaskGroup taskGroup) {
+        taskGroup.setUser(null);
+        this.tasksGroup.remove(taskGroup);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if(obj == this)
+        if (this == obj)
             return true;
-        if(!(obj instanceof User)){
+        if (obj == null || getClass() != obj.getClass())
             return false;
-        }
         User user = (User) obj;
-        return Objects.equals(id, user.id) && Objects.equals(username, user.username) &&
-        Objects.equals(password, user.password);
+        return Objects.equals(id, user.id) &&
+                Objects.equals(username, user.username) &&
+                Objects.equals(password, user.password) &&
+                Objects.equals(tasksGroup, user.tasksGroup); // Incluindo tasksGroup para comparação
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
-        return Objects.hash(id, username, password);
+        return Objects.hash(id, username, password, tasksGroup);
     }
 
     @Override

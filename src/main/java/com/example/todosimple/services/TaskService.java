@@ -10,55 +10,56 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.example.todosimple.models.Task;
-import com.example.todosimple.models.User;
+import com.example.todosimple.models.TaskGroup;
 import com.example.todosimple.repositories.TaskRepository;
+import com.example.todosimple.repositories.TaskGroupRepository;
 
 @Service
 public class TaskService {
-    
+
     @Autowired
     private TaskRepository taskRepository;
 
     @Autowired
-    private UserService userService;
+    private TaskGroupRepository taskGroupRepository;
 
     public Task findById(Long id){
         Optional<Task> task = this.taskRepository.findById(id);
-        return task.orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,
-            "Tarefa não encontrada! Id: " + ", Tipo: " +
-            Task.class.getName()));
-    }
-
-    public List<Task> findAllByUserId(Long userId){
-        List<Task> tasks = this.taskRepository.findByUser_Id(userId);
-        return tasks;
+        return task.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+            "Tarefa não encontrada! Id: " + id));
     }
 
     @Transactional
     public Task create(Task obj){
-        User user = this.userService.findById(obj.getUser().getId());
+        TaskGroup taskGroup = taskGroupRepository.findById(obj.getTaskGroup().getId())
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                "Grupo de tarefas não encontrado! Id: " + obj.getTaskGroup().getId()));
         obj.setId(null);
-        obj.setUser(user);
-        obj = this.taskRepository.save(obj);
-        return obj;
+        obj.setTaskGroup(taskGroup);
+        return this.taskRepository.save(obj);
     }
-
+    
     @Transactional
     public Task update(Task obj){
-        Task newObj = findById(obj.getId());
-        newObj.setDescription(obj.getDescription());
-        return this.taskRepository.save(newObj);
+        Task existingTask = findById(obj.getId());
+        existingTask.setDescription(obj.getDescription());
+        return this.taskRepository.save(existingTask);
     }
 
     public void delete(Long id){
         findById(id);
-        try{
+        try {
             this.taskRepository.deleteById(id);
-        }catch(Exception e){
-            throw new RuntimeException(
-                "Não é possível excluir, pois há entidades relacionadas."
-            );
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                "Não é possível excluir a tarefa, pois há entidades relacionadas.");
         }
     }
 
+    public List<Task> findByTaskGroupId(Long taskGroupId) {
+        taskGroupRepository.findById(taskGroupId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                "Grupo de tarefas não encontrado! Id: " + taskGroupId));
+        return taskRepository.findByTaskGroupId(taskGroupId);
+    }
 }
