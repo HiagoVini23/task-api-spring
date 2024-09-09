@@ -39,3 +39,29 @@ mat-card {
     font-family: 'Courier New', Courier, monospace;
     color: #3f51b5;
 }
+
+
+.custom-expansion-panel {
+    width: 100%;
+    max-width: 600px; 
+    margin: 0 auto; 
+    margin-bottom: 2px;
+}
+
+@media (max-width: 600px) {
+    .custom-expansion-panel {
+        max-width: 100%;
+    }
+}
+
+.mini-button-container {
+    display: flex;
+    justify-content: center;
+}
+
+.mini-button-container button {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    font-size: 10px;
+}

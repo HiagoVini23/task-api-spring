@@ -10,10 +10,10 @@ export class TaskService {
 
   constructor(private http: HttpClient) { }
 
-  async getTasks(userId: number): Promise<any> {
+  async getTasksByTaskGroupId(taskGroupId: number): Promise<any> {
     try {
       const response = await this.http
-        .get(`${environment.API}/task/all/${userId}`)
+        .get(`${environment.API}/task/taskgroup/${taskGroupId}`)
         .toPromise();
       return response;
     } catch (error) {

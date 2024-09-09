@@ -21,10 +21,10 @@ export class TaskGroupService {
     }
   }
 
-  async deleteTask(taskId: number): Promise<any> {
+  async deleteTaskGroup(taskGroupId: number): Promise<any> {
     try {
       const response = await this.http
-        .delete(`${environment.API}/task/${taskId}`)
+        .delete(`${environment.API}/taskgroup/${taskGroupId}`)
         .toPromise();
       return response;
     } catch (error) {
@@ -32,10 +32,10 @@ export class TaskGroupService {
     }
   }
 
-  async createTask(task: any): Promise<any>  {
+  async createTaskGroup(taskGroup: any): Promise<any>  {
     try {
       const response = await this.http
-        .post(`${environment.API}/task`, task)
+        .post(`${environment.API}/taskgroup`, taskGroup)
         .toPromise()
       return response;
     } catch (error) {
@@ -43,10 +43,10 @@ export class TaskGroupService {
     }
   }
 
-  async editTask(taskId: number, task: any): Promise<any>  {
+  async editTaskGroup(taskGroupId: number, taskGroup: any): Promise<any>  {
     try {
       const response = await this.http
-        .put(`${environment.API}/task/${taskId}`, task)
+        .put(`${environment.API}/taskgroup/${taskGroupId}`, taskGroup)
         .toPromise()
       return response;
     } catch (error) {

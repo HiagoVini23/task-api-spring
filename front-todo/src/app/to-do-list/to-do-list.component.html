@@ -14,37 +14,48 @@
         <mat-icon matTooltip="Cancelar" *ngIf="openInput">close</mat-icon>
     </button>
     <form *ngIf="openInput" class="form-task" style="width: 50%; margin-bottom: 20px;" (ngSubmit)="createTaskGroup()"
-        [formGroup]="taskForm" #formDir="ngForm">
+        [formGroup]="taskGroupForm" #formDir="ngForm">
         <mat-form-field style="width: 100%;" class="form-field">
-            <mat-label>Descrição</mat-label>
-            <textarea matInput placeholder="Insira a descrição" formControlName="description"></textarea>
+            <mat-label>Título</mat-label>
+            <textarea matInput placeholder="Insira o título" formControlName="title"></textarea>
         </mat-form-field>
         <button type="submit" mat-flat-button color="primary">CONFIRMAR</button>
     </form>
 
     <ng-container *ngFor="let taskGroup of currentPageTasksGroup">
-        <mat-card>
-            <!--
-            <mat-card-content [ngStyle]="task.completed ? {'text-decoration': 'line-through'} : {}">
-                {{ task.description }}
-            </mat-card-content>
-            -->
-            <mat-card-content>
-                {{taskGroup.title}}
-            </mat-card-content>
-            <div id='card-actions'>
-                <mat-card-actions>
-                    <button mat-icon-button matTooltip="Editar" color="primary">
-                        <mat-icon>edit</mat-icon>
-                    </button>
-                    <button mat-icon-button matTooltip="Excluir" color="primary">
-                        <mat-icon>delete</mat-icon>
-                    </button>
-                </mat-card-actions>
+        <mat-expansion-panel class="custom-expansion-panel"
+            [expanded]="expandedTaskGroupId === taskGroup.id"
+            (opened)="onPanelOpened(taskGroup.id)"
+            (closed)="onPanelClosed(taskGroup.id)">
+            <mat-expansion-panel-header style="display: flex; justify-content: space-between; align-items: center;">
+                <mat-panel-title> {{taskGroup.title}} </mat-panel-title>
+                <div id='card-actions'>
+                    <mat-card-actions>
+                        <button mat-icon-button matTooltip="Editar" color="primary">
+                            <mat-icon>edit</mat-icon>
+                        </button>
+                        <button mat-icon-button matTooltip="Excluir" color="primary" (click)="$event.stopPropagation(); deleteTaskGroup(taskGroup.id); ">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </mat-card-actions>
+                </div>
+            </mat-expansion-panel-header>
+            <div>
+                <!-- Exiba as tarefas aqui -->
+                <mat-selection-list color="primary">
+                    <mat-list-option *ngFor="let task of taskGroup.tasks">
+                        {{ task.description }}
+                    </mat-list-option>
+                </mat-selection-list>
             </div>
-        </mat-card>
-    </ng-container>
-    <mat-paginator (page)="handlePageEvent($event)" [length]="tasksGroup.length" [pageSize]="pageSize" 
-    [pageSizeOptions]="[4, 8, 25, 100]" aria-label="Select page">
+            <div class="mini-button-container">
+                <button mat-mini-fab color="primary">
+                    <mat-icon matTooltip="Adicionar">add</mat-icon>
+                </button>
+            </div>
+        </mat-expansion-panel>
+    </ng-container>    
+    <mat-paginator (page)="handlePageEvent($event)" [length]="tasksGroup.length" [pageSize]="pageSize"
+        [pageSizeOptions]="[4, 8, 25, 100]" aria-label="Select page">
     </mat-paginator>
 </div>
